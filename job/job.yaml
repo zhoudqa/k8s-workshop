@@ -1,0 +1,37 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config-map-for-hello-job
+data:
+    job-script: |
+        while sleep 1
+        do
+            echo Hello from heaven
+        done
+    
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: hello-job
+spec:
+  template:
+    metadata:
+      name: hello-job
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.7.9
+        command: ["sh",  "/usr/local/job-script.sh"]
+        volumeMounts:
+        - name: volume
+          mountPath: /usr/local
+      volumes:
+      - name: volume
+        configMap:
+          name: config-map-for-hello-job
+          items:
+          - key: job-script
+            path: job-script.sh
+      restartPolicy: Never

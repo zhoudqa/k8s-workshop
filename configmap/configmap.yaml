@@ -1,0 +1,28 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: example-config
+data:
+    username: Alice
+    env: prod
+---
+apiVersion: v1
+kind: Pod
+metadata:
+    name: pod-for-config-map
+spec:
+    containers:
+    - name: nginx
+      image: nginx:1.7.9
+      env:
+      - name: MY_USERNAME
+        valueFrom:
+            configMapKeyRef:
+                name: example-config
+                key: username
+      - name: NODE_ENV
+        valueFrom:
+            configMapKeyRef:
+                name: example-config
+                key: env

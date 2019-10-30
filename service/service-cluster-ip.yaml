@@ -1,0 +1,30 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-demo
+  labels:
+      app: nginx
+spec:
+  containers:
+  - name: pod-demo-container
+    image: nginx:1.7.9
+    lifecycle:
+      postStart:
+        exec:
+          command: ["/bin/sh", "-c", "echo Hello from the postStart handler > /usr/share/message"]
+      preStop:
+        exec:
+          command: ["/usr/sbin/nginx","-s","quit"]
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: nginx-service-cluster-ip
+    labels:
+        app: nginx
+spec:
+    ports:
+    - port: 80
+    selector:
+        app: nginx

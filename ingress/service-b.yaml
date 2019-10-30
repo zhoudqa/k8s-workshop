@@ -1,0 +1,43 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: configmap-to-mount-b
+data:
+    index.html: |
+        <HTML>
+          <HEAD>
+            <TITLE>Service B</TITLE>
+          </HEAD>
+          <BODY>
+            <H>This is index of service b</H>
+          </BODY>
+        </HTML> 
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-b-pod
+  labels:
+      app: nginx-b
+spec:
+  containers:
+    - name: test-container
+      image: nginx:1.7.9
+      volumeMounts:
+      - name: config-volume
+        mountPath: /etc/nginx/conf.d
+  volumes:
+    - name: config-volume
+      configMap:
+        name: configmap-to-mount-b
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: service-b
+spec:
+    ports:
+    - port: 80
+    selector:
+        app: nginx-b
